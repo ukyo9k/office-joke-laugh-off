@@ -15,7 +15,7 @@ import sys
 # The joke: one line, written fresh for this competition.
 JOKE = (
     "My boss said 'let's take this offline,' so I unplugged the Wi-Fi "
-    "router \u2014 now the whole office is offline, including my promotion."
+    "router \u2014 now the whole office is offline, and so is my promotion."
 )
 
 MIN_CHARS = 1
@@ -30,11 +30,13 @@ def validate(text: str) -> None:
         )
     if not text.strip():
         raise ValueError("joke is only whitespace")
-    if "\n" in text or "\r" in text:
-        raise ValueError("joke must be exactly one line")
+    if "\n" in text or "\r" in text or "\t" in text:
+        raise ValueError("joke must be exactly one line with no newline/CR/tab")
     for ch in text:
-        if ord(ch) < 0x20 and ch not in ("\t",):
+        if ord(ch) < 0x20 or ord(ch) == 0x7F:
             raise ValueError(f"joke contains control character U+{ord(ch):04X}")
+    if not any(ch.isalpha() for ch in text):
+        raise ValueError("joke must contain at least one alphabetic character")
 
 
 def main() -> int:
